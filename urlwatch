@@ -48,6 +48,7 @@ user_agent = '%s/%s (+http://thp.io/2008/urlwatch/info.html)' % (pkgname, __vers
 
 # Configuration section
 display_errors = False
+enable_pushover = False
 line_length = 75
 
 
@@ -97,6 +98,7 @@ import concurrent.futures
 
 from urlwatch import handler
 from urlwatch import mailer
+from urlwatch import pushover
 
 # One minute (=60 seconds) timeout for each request to avoid hanging
 socket.setdefaulttimeout(60)
@@ -387,6 +389,15 @@ if __name__ == '__main__':
                 log.info('E-Mail to %s sent.', email_receiver_address)
             except Exception, e:
                 log.warning('E-Mail delivery error: %s', e)
+        
+        if enable_pushover:
+        	try:
+        		title = 'urlwatch (%d)' % len(summary)
+        		pushover.send(title, short_summary)
+        		log.info('Push sent.')
+        	except Exception, e:
+        		log.warning('Pushover delivery error: %s', e)
+        		
     else:
         log.info('no details collected - not printing')
 
